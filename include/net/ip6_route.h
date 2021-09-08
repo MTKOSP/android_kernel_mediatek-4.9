@@ -39,6 +39,7 @@ struct route_info {
  * Unlike IPv4, hdr->seg_len doesn't include the IPv6 header
  */
 #define IP6_MAX_MTU (0xFFFF + sizeof(struct ipv6hdr))
+extern int sysctl_optr;
 
 /*
  * rt6_srcprefs2flags() and rt6_flags2srcprefs() translate
@@ -133,6 +134,8 @@ struct rt6_info *ip6_dst_alloc(struct net *net, struct net_device *dev,
  */
 struct rt6_info *rt6_get_dflt_router(const struct in6_addr *addr,
 				     struct net_device *dev);
+struct rt6_info *rt6_get_dflt_router_expires(struct net_device *dev);
+int ip6_operator_isop12(void);
 struct rt6_info *rt6_add_dflt_router(const struct in6_addr *gwaddr,
 				     struct net_device *dev, unsigned int pref);
 
@@ -142,9 +145,10 @@ int rt6_route_rcv(struct net_device *dev, u8 *opt, int len,
 		  const struct in6_addr *gwaddr);
 
 void ip6_update_pmtu(struct sk_buff *skb, struct net *net, __be32 mtu, int oif,
-		     u32 mark);
+		     u32 mark, kuid_t uid);
 void ip6_sk_update_pmtu(struct sk_buff *skb, struct sock *sk, __be32 mtu);
-void ip6_redirect(struct sk_buff *skb, struct net *net, int oif, u32 mark);
+void ip6_redirect(struct sk_buff *skb, struct net *net, int oif, u32 mark,
+		  kuid_t uid);
 void ip6_redirect_no_header(struct sk_buff *skb, struct net *net, int oif,
 			    u32 mark);
 void ip6_sk_redirect(struct sk_buff *skb, struct sock *sk);
